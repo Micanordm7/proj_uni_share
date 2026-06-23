@@ -15,10 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from annonces.views import home
+from django.urls import path, include
+from django.views.generic import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
+#from annonces.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',home,name='home'),
-]
+    #path('',home,name='home'),
+
+    # Délégation des chemins à l'application annonces
+    path('annonces/', include('annonces.urls')),
+
+    # Redirection automatique de la racine du site vers les annonces
+    path('', RedirectView.as_view(url='/annonces/', permanent=True)),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
